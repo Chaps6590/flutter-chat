@@ -1,10 +1,6 @@
-
-
+import 'package:chat/pages/login_page.dart';
+import 'package:chat/pages/users_page.dart';
 import 'package:chat/services/auth_services.dart';
-import 'package:chat/widgets/Labels.dart';
-import 'package:chat/widgets/btn_blue.dart';
-import 'package:chat/widgets/custom_input.dart';
-import 'package:chat/widgets/logo.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,78 +10,40 @@ class LoadingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffF2F2F2),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            height: MediaQuery.of(context).size.height*0.9,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Logo(titulo: 'Messenger',),
-                _Form(),
-                Labels(ruta: 'register',text1: 'No tienes una cuenta?',text2: 'Crear una Cuenta!',),
-                  
-                
-                  
-              ]),
-          ),
-        ),
-      )
-      ); 
-  }
-}
-
-
-class _Form extends StatefulWidget {
-  @override
-  State<_Form> createState() => __FormState();
-}
-
-class __FormState extends State<_Form> {
-
-  
-  final emailCtrl = TextEditingController();
-  final passCtrl = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 40),
-      padding: EdgeInsets.symmetric( horizontal: 50),
-
-      child: Column(
-        children: <Widget>[
-        
-        CustomInput(
-          icon: Icons.mail_outline,
-          placeholder: 'Correo',
-          keyboardType: TextInputType.emailAddress,
-          textController: emailCtrl,
-        ),
-
-        CustomInput(
-          icon: Icons.lock_outline,
-          placeholder: 'Password',
-          keyboardType: TextInputType.emailAddress,
-          textController: passCtrl,
-          isPassword: true,
-        ),
-
-        Btn_Blue(
-          text: 'Ingrese',
-          onPressed: (){
-            print(emailCtrl.text);
-            print(passCtrl.text);
-            final authServices = Provider.of<AuthServices>(context, listen: false);
-            authServices.login(emailCtrl.text, passCtrl.text);
-          },
-        ),
-
-
-        ]),
+      body: FutureBuilder(
+        future: checkLoginState(context),
+        builder: (context, snapshot) {
+          return Center(
+            child: Text('Espere..'),
+          );
+        },
+      ),
     );
   }
-}
 
+  Future checkLoginState(BuildContext context) async {
+    final authServices = Provider.of<AuthServices>(context, listen: false);
+
+    final autenticado = await authServices.isLoggedIn();
+
+    if ( autenticado){
+
+      Navigator.pushReplacement(
+        context, 
+        PageRouteBuilder(
+          pageBuilder: (_,__,___) => UsersPage(),
+          transitionDuration: Duration(microseconds: 0)
+          )
+        );
+    } else {
+      Navigator.pushReplacement(
+        context, 
+        PageRouteBuilder(
+          pageBuilder: (_,__,___) => LoginPage(),
+          transitionDuration: Duration(microseconds: 0)
+          )
+        );
+    }
+  }
+
+}

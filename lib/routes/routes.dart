@@ -2,8 +2,8 @@
 
 
 import 'package:chat/pages/chat_page.dart';
-import 'package:chat/pages/loading_page.dart';
 import 'package:chat/pages/login_page.dart';
+import 'package:chat/pages/Loading_Page.dart';
 import 'package:chat/pages/register_page.dart';
 import 'package:chat/pages/users_page.dart';
 import 'package:flutter/material.dart';

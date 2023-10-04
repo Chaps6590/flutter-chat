@@ -1,10 +1,13 @@
 
 
+import 'package:chat/helpers/mostrar_alerta.dart';
+import 'package:chat/services/auth_services.dart';
 import 'package:chat/widgets/Labels.dart';
 import 'package:chat/widgets/btn_blue.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 
 class RegisterPage extends StatelessWidget {
@@ -23,7 +26,7 @@ class RegisterPage extends StatelessWidget {
               children: <Widget>[
                 Logo(titulo: 'Registro',),
                 _Form(),
-                Labels(ruta: 'loading',text1: 'Ya tienes Cuenta?', text2: 'Ingresar',),
+                Labels(ruta: 'login',text1: 'Ya tienes Cuenta?', text2: 'Ingresar',),
                   
                 
                   
@@ -50,6 +53,9 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+
+    final authServices = Provider.of<AuthServices>( context ); 
+
     return Container(
       margin: EdgeInsets.only(top: 40),
       padding: EdgeInsets.symmetric( horizontal: 50),
@@ -80,10 +86,17 @@ class __FormState extends State<_Form> {
         ),
 
         Btn_Blue(
-          text: 'Ingrese',
-          onPressed: (){
-            print(emailCtrl.text);
-            print(passCtrl.text);
+          text: 'Crear cuenta.',
+          onPressed: authServices.autenticando ? () {return null;} : () async {
+              FocusScope.of(context).unfocus();
+              final loginOk = await authServices.register(nameCtrl.text.trim(),emailCtrl.text.trim(), passCtrl.text.trim());
+              
+              if(loginOk){
+
+                Navigator.pushReplacementNamed(context, 'users');
+              } else {
+                mostrarAlerta(context, 'Registro Incorrecto', 'Credenciales no validas.');
+              }
           },
         ),
 
