@@ -2,6 +2,7 @@
 
 import 'package:chat/helpers/mostrar_alerta.dart';
 import 'package:chat/services/auth_services.dart';
+import 'package:chat/services/socket_service.dart';
 import 'package:chat/widgets/Labels.dart';
 import 'package:chat/widgets/btn_blue.dart';
 import 'package:chat/widgets/custom_input.dart';
@@ -55,6 +56,7 @@ class __FormState extends State<_Form> {
   Widget build(BuildContext context) {
 
     final authServices = Provider.of<AuthServices>( context ); 
+    final socketService = Provider.of<SocketService>( context );
 
     return Container(
       margin: EdgeInsets.only(top: 40),
@@ -92,7 +94,7 @@ class __FormState extends State<_Form> {
               final loginOk = await authServices.register(nameCtrl.text.trim(),emailCtrl.text.trim(), passCtrl.text.trim());
               
               if(loginOk){
-
+                socketService.connect();
                 Navigator.pushReplacementNamed(context, 'users');
               } else {
                 mostrarAlerta(context, 'Registro Incorrecto', 'Credenciales no validas.');
